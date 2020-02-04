@@ -1,0 +1,17 @@
+diff --git a/src/core/lib/debug/trace.cc b/src/core/lib/debug/trace.cc
+index 84c0a38..5dce318 100644
+--- a/src/core/lib/debug/trace.cc
++++ b/src/core/lib/debug/trace.cc
+@@ -70,6 +70,12 @@ bool TraceFlagList::Set(const char* name, bool enabled) {
+ }
+ 
+ void TraceFlagList::Add(TraceFlag* flag) {
++  /* https://github.com/grpc/grpc/issues/21213 */
++  for (TraceFlag* t = root_tracer_; t != nullptr; t = t->next_tracer_) {
++    if (t == flag) {
++      return;
++    }
++  }
+   flag->next_tracer_ = root_tracer_;
+   root_tracer_ = flag;
+ }
